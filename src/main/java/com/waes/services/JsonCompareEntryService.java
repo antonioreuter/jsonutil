@@ -38,9 +38,11 @@ public class JsonCompareEntryService {
     JsonCompareEntry jsonCompareEntry = findById(id);
     JsonPayload payloadLeft = jsonCompareEntry.getJsonPayload(PayloadPosition.LEFT);
     JsonPayload payloadRight = jsonCompareEntry.getJsonPayload(PayloadPosition.RIGHT);
+    int payloadLeftSize = payloadLeft.getPayload().getBytes().length;
+    int payloadRightSize = payloadRight.getPayload().getBytes().length;
 
     MapDifference<String, Object> mapDifference = jsonComparator.diff(payloadLeft.getPayload(), payloadRight.getPayload());
-    JsonDiff<String,Object> diff = new JsonDiff<>(mapDifference);
+    JsonDiff<String,Object> diff = new JsonDiff<>(mapDifference, payloadLeftSize, payloadRightSize);
 
     return diff;
   }

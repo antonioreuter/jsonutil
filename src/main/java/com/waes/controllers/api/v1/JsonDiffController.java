@@ -35,15 +35,15 @@ public class JsonDiffController {
     @ApiOperation(value = "Adds the left Json payload that you want to compare.", notes = "Adds a new Left Json payload.")
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}/left", method = RequestMethod.PUT)
-    public void leftJson(@PathVariable("id") long id, @RequestBody String payload) {
-        saveJsonPayload(id, PayloadPosition.LEFT, payload);
+    public JsonPayload leftJson(@PathVariable("id") long id, @RequestBody String payload) {
+        return saveJsonPayload(id, PayloadPosition.LEFT, payload);
     }
 
     @ApiOperation(value = "Adds the right Json payload that you want to compare", notes = "Saves a new Right Json payload.")
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}/right", method = RequestMethod.PUT)
-    public void rightJson(@PathVariable("id") long id, @RequestBody String payload) {
-      saveJsonPayload(id, PayloadPosition.RIGHT, payload);
+    public JsonPayload rightJson(@PathVariable("id") long id, @RequestBody String payload) {
+      return saveJsonPayload(id, PayloadPosition.RIGHT, payload);
     }
 
     @ResponseBody
@@ -53,10 +53,11 @@ public class JsonDiffController {
         return jsonCompareEntryService.comparePayloads(id);
     }
 
-    private JsonCompareEntry saveJsonPayload(long id, PayloadPosition position, String payload) {
+    private JsonPayload saveJsonPayload(long id, PayloadPosition position, String payload) {
       log.info("Payload ({}): {} {}", id, position, payload);
 
       JsonPayload jsonPayload = JsonPayload.builder().payload(payload).position(position).build();
-      return jsonCompareEntryService.addPayload(id, jsonPayload);
+      JsonCompareEntry jsonCompareEntry = jsonCompareEntryService.addPayload(id, jsonPayload);
+      return jsonCompareEntry.getJsonPayload(position);
     }
 }

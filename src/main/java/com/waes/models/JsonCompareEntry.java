@@ -1,8 +1,6 @@
 package com.waes.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.*;
 import com.waes.exceptions.InvalidPayloadPositionException;
 import com.waes.exceptions.PayloadExceedMaxNumberException;
 import lombok.*;
@@ -39,8 +37,9 @@ public class JsonCompareEntry implements Serializable {
     @Column(unique = true)
     private String name;
 
-    @Getter(AccessLevel.NONE)
+    @JsonIgnore
     @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<JsonPayload> payloads;
 
@@ -60,14 +59,6 @@ public class JsonCompareEntry implements Serializable {
         throw new IllegalStateException("There is no payload registred!");
 
       return payloads.stream().filter(p -> p.getPosition().equals(position)).findFirst().get();
-    }
-
-    @JsonIgnore
-    public Collection<JsonPayload> getPayloads() {
-      if (CollectionUtils.isEmpty(payloads))
-        return Collections.EMPTY_LIST;
-
-      return Collections.unmodifiableCollection(payloads);
     }
 
     private void validatePayloadEntry(JsonPayload payload) {

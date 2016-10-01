@@ -1,7 +1,6 @@
 package com.waes.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,6 +26,7 @@ public class JsonPayload implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Getter(AccessLevel.NONE)
     @NotNull
     private String payload;
 
@@ -36,4 +36,9 @@ public class JsonPayload implements Serializable {
 
     @ManyToOne
     private JsonCompareEntry jsonCompareEntry;
+
+    @JsonIgnore
+    public String getPayload() {
+        return this.payload;
+    }
 }
