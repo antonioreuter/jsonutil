@@ -1,0 +1,11 @@
+{
+  "order": 10,
+  "client": {
+    "document": "987945",
+    "name": "Antonio Reuter"
+  },
+  "payment": {
+    "type": "Credit Card",
+    "value": 22.50
+  }
+}

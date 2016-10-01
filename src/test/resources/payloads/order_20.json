@@ -1,0 +1,11 @@
+{
+  "order": 10,
+  "seller": {
+    "id": 52,
+    "name": "Walmart.com"
+  },
+  "payment": {
+    "type": "Credit Card",
+    "value": 15.30
+  }
+}
