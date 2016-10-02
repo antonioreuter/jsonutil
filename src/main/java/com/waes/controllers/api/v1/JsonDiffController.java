@@ -33,15 +33,15 @@ public class JsonDiffController {
     }
 
     @ApiOperation(value = "Adds the left Json payload that you want to compare.", notes = "Adds a new Left Json payload.")
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/{id}/left", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "/{id}/left", method = RequestMethod.POST)
     public JsonPayload leftJson(@PathVariable("id") long id, @RequestBody String payload) {
         return saveJsonPayload(id, PayloadPosition.LEFT, payload);
     }
 
     @ApiOperation(value = "Adds the right Json payload that you want to compare", notes = "Saves a new Right Json payload.")
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/{id}/right", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "/{id}/right", method = RequestMethod.POST)
     public JsonPayload rightJson(@PathVariable("id") long id, @RequestBody String payload) {
       return saveJsonPayload(id, PayloadPosition.RIGHT, payload);
     }

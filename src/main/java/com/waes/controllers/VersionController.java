@@ -18,7 +18,7 @@ public class VersionController {
     private String version;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String healthcheck() {
+    public String showVersion() {
         log.info("Getting the version...");
         return version;
     }

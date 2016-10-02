@@ -1,25 +1,20 @@
 package com.waes.comparators;
 
-import com.google.common.collect.MapDifference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
+import com.google.gson.reflect.TypeToken;
+import com.waes.models.JsonDiff;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import sun.misc.Unsafe;
 
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
+import java.lang.reflect.Type;
+import java.util.Map;
 
 /**
  * Created by aandra1 on 30/09/16.
@@ -35,8 +30,13 @@ public class JsonComparatorTest {
     String payloadLeft = retrievePayload("payloads/order_10.json");
     String payloadRight = retrievePayload("payloads/order_10.json");
 
-    MapDifference<String, Object> diff = subject.diff(payloadLeft, payloadRight);
-    Assert.assertTrue(diff.areEqual());
+    JsonDiff<String, Object> jsonDiff = subject.compare(payloadLeft, payloadRight);
+    Assert.assertTrue(jsonDiff.isIdentical());
+    Assert.assertTrue(jsonDiff.isSameSize());
+    Assert.assertEquals(0, jsonDiff.getEntriesOnlyOnLeft().size());
+    Assert.assertEquals(0, jsonDiff.getEntriesOnlyOnRight().size());
+    Assert.assertEquals(0, jsonDiff.getEntriesDiffering().size());
+    Assert.assertEquals(convertJsonToMap(payloadLeft), jsonDiff.getEntriesInCommon());
   }
 
   @Test
@@ -44,8 +44,17 @@ public class JsonComparatorTest {
     String payloadLeft = retrievePayload("payloads/order_10.json");
     String payloadRight = retrievePayload("payloads/order_10_1.json");
 
-    MapDifference<String, Object> diff = subject.diff(payloadLeft, payloadRight);
-    Assert.assertFalse(diff.areEqual());
+    String payloadInCommon = "{\"order\":10.0}";
+    String payloadDiff = "{\"client\":{\"left\":{\"document\":\"123456\",\"name\":\"Antonio Reuter\"},\"right\":{\"document\":\"987945\",\"name\":\"Antonio Reuter\"}},\"payment\":{\"left\":{\"type\":\"Credit Card\",\"value\":15.3},\"right\":{\"type\":\"Credit Card\",\"value\":22.5}}}";
+
+    JsonDiff<String, Object> jsonDiff = subject.compare(payloadLeft, payloadRight);
+    Assert.assertFalse(jsonDiff.isIdentical());
+    Assert.assertTrue(jsonDiff.isSameSize());
+    Assert.assertEquals(0, jsonDiff.getEntriesOnlyOnLeft().size());
+    Assert.assertEquals(0, jsonDiff.getEntriesOnlyOnRight().size());
+    Assert.assertEquals(2, jsonDiff.getEntriesDiffering().size());
+    Assert.assertEquals(convertJsonToMap(payloadInCommon), jsonDiff.getEntriesInCommon());
+    Assert.assertEquals(convertJsonToMap(payloadDiff), jsonDiff.getEntriesDiffering());
   }
 
   @Test
@@ -53,8 +62,28 @@ public class JsonComparatorTest {
     String payloadLeft = retrievePayload("payloads/order_10.json");
     String payloadRight = retrievePayload("payloads/order_20.json");
 
-    MapDifference<String, Object> diff = subject.diff(payloadLeft, payloadRight);
-    Assert.assertFalse(diff.areEqual());
+    String payloadInCommon = "{\"order\":10.0,\"payment\":{\"type\":\"Credit Card\",\"value\":15.3}}";
+    String payloadDiff = "{}";
+    String payloadOnlyOnLeft = "{\"client\":{\"document\":\"123456\",\"name\":\"Antonio Reuter\"}}";
+    String payloadOnlyOnRight = "{\"seller\":{\"id\":52.0,\"name\":\"Walmart.com\"}}";
+
+    JsonDiff<String, Object> jsonDiff = subject.compare(payloadLeft, payloadRight);
+    Assert.assertFalse(jsonDiff.isIdentical());
+    Assert.assertFalse(jsonDiff.isSameSize());
+    Assert.assertEquals(1, jsonDiff.getEntriesOnlyOnLeft().size());
+    Assert.assertEquals(1, jsonDiff.getEntriesOnlyOnRight().size());
+    Assert.assertEquals(0, jsonDiff.getEntriesDiffering().size());
+    Assert.assertEquals(convertJsonToMap(payloadInCommon), jsonDiff.getEntriesInCommon());
+    Assert.assertEquals(convertJsonToMap(payloadDiff), jsonDiff.getEntriesDiffering());
+    Assert.assertEquals(convertJsonToMap(payloadOnlyOnLeft), jsonDiff.getEntriesOnlyOnLeft());
+    Assert.assertEquals(convertJsonToMap(payloadOnlyOnRight), jsonDiff.getEntriesOnlyOnRight());
+  }
+
+  private <K, V> Map<String, Object> convertJsonToMap(String payload) {
+    Gson gson = new GsonBuilder().create();
+    Type type = new TypeToken<Map<K, V>>(){}.getType();
+
+    return gson.fromJson(payload, type);
   }
 
   private String retrievePayload(String fileName){
@@ -69,5 +98,4 @@ public class JsonComparatorTest {
 
     return payload;
   }
-
 }

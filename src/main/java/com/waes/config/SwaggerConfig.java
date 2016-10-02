@@ -30,7 +30,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Json Util - Web API")
-                .description("Json Util - WEB API based on REST to diff two json files")
+                .description("Json Util - WEB API based on REST to compare two json files")
                 .contact("Antonio Reuter")
                 .license("Apache License Version 2.0")
                 .version("1.0")
