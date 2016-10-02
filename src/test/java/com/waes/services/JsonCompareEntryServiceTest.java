@@ -1,8 +1,11 @@
 package com.waes.services;
 
 import com.waes.comparators.JsonComparator;
+import com.waes.exceptions.PayloadComparisonException;
 import com.waes.exceptions.ResourceNotFoundException;
 import com.waes.models.JsonCompareEntry;
+import com.waes.models.JsonPayload;
+import com.waes.models.PayloadPosition;
 import com.waes.repositories.JsonCompareEntryRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +39,17 @@ public class JsonCompareEntryServiceTest {
     when(jsonCompareEntryRepository.findOne(any(Long.class))).thenReturn(null);
 
     subject.findById(1L);
+  }
+
+  @Test(expected = PayloadComparisonException.class)
+  public void whenThereIsNoPaylodForAJsonCompareEntry() {
+    JsonCompareEntry jsonCompareEntry = JsonCompareEntry.builder().id(1L).name("Teste: whenThereIsNoPaylodForAJsonCompareEntry").build();
+    JsonPayload jsonPayload = JsonPayload.builder().id(1L).position(PayloadPosition.LEFT).payload("{}").build();
+    jsonCompareEntry.addPayload(jsonPayload);
+
+    when(jsonCompareEntryRepository.findOne(any(Long.class))).thenReturn(jsonCompareEntry);
+
+    subject.comparePayloads(1L);
   }
 
   @Test

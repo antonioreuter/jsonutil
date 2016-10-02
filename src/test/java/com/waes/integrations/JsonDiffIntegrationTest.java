@@ -51,6 +51,23 @@ public class JsonDiffIntegrationTest {
   }
 
   @Test
+  public void whenTryToCompareAndThereIsJustOnePayloadRegistred() {
+    JsonCompareEntry data = JsonCompareEntry.builder().name("Integration Test: whenTryToCompareAndThereIsJustOnePayloadRegistred").build();
+    ResponseEntity<JsonCompareEntry> jsonCompareEntryResponse =  this.restTemplate.postForEntity("/api/v1/diff", data, JsonCompareEntry.class );
+    JsonCompareEntry jsonCompareEntryCreated = jsonCompareEntryResponse.getBody();
+
+    String payload = "{ \"order\": 10, \"client\": { \"name\": \"Jhon Doe\" } }";
+    final HttpEntity<String> entityRequest = new HttpEntity<>(payload, customHeaders());
+    ResponseEntity<JsonPayload> jsonPayloadResponse =  this.restTemplate.postForEntity("/api/v1/diff/{id}/right", entityRequest, JsonPayload.class, jsonCompareEntryCreated.getId());
+
+    ResponseEntity<JsonDiff> jsonDiffResponse = this.restTemplate.getForEntity("/api/v1/diff/{id}", JsonDiff.class, jsonCompareEntryCreated.getId());
+
+    assertEquals(201, jsonCompareEntryResponse.getStatusCodeValue());
+    assertEquals(201, jsonPayloadResponse.getStatusCodeValue());
+    assertEquals(412, jsonDiffResponse.getStatusCodeValue());
+  }
+
+  @Test
   public void createJsonPayload() {
     JsonCompareEntry data = JsonCompareEntry.builder().name("Integration Test: createJsonPayload").build();
     ResponseEntity<JsonCompareEntry> jsonCompareEntryResponse =  this.restTemplate.postForEntity("/api/v1/diff", data, JsonCompareEntry.class );

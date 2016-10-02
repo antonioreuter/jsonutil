@@ -24,9 +24,8 @@
         <appender-ref ref="FILE"/>
     </appender>
 
-
     <logger name="org.springframework" level="WARN"/>
-    <logger name="com.aes.jsonutil" level="ERROR"/>
+    <logger name="com.waes" level="ERROR"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
