@@ -24,7 +24,14 @@ public class JsonDiffController {
     @Autowired
     private JsonCompareEntryService jsonCompareEntryService;
 
-    @ApiOperation(value = "Save the an entry to compare json payloads", notes = "Saves a new entry Json.")
+
+  /**
+   * Creates an entry to group the payloads that you want to compare.
+   *
+   * @param jsonCompareEntry
+   * @return
+   */
+  @ApiOperation(value = "Creates an entry to group the payloads that you want to compare.", notes = "Save a new Json entry.")
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST)
     public JsonCompareEntry createEntry(@RequestBody JsonCompareEntry jsonCompareEntry) {
@@ -32,13 +39,26 @@ public class JsonDiffController {
         return jsonCompareEntryService.save(jsonCompareEntry);
     }
 
-    @ApiOperation(value = "Adds the left Json payload that you want to compare.", notes = "Adds a new Left Json payload.")
+  /**
+   *Saves the Json payload in the left side on a Json Entry already created.
+   *
+   * @param id
+   * @param payload
+   * @return
+   */
+    @ApiOperation(value = "Saves the Json payload in the left side on a Json Entry already created.", notes = "Adds a new Json payload in the left side.")
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/{id}/left", method = RequestMethod.POST)
     public JsonPayload leftJson(@PathVariable("id") long id, @RequestBody String payload) {
         return saveJsonPayload(id, PayloadPosition.LEFT, payload);
     }
 
+  /**
+   *
+   * @param id
+   * @param payload
+   * @return
+   */
     @ApiOperation(value = "Adds the right Json payload that you want to compare", notes = "Saves a new Right Json payload.")
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/{id}/right", method = RequestMethod.POST)
@@ -46,6 +66,11 @@ public class JsonDiffController {
       return saveJsonPayload(id, PayloadPosition.RIGHT, payload);
     }
 
+  /**
+   *
+   * @param id
+   * @return
+   */
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

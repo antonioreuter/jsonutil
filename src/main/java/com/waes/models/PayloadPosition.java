@@ -3,6 +3,7 @@ package com.waes.models;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -16,5 +17,6 @@ public enum PayloadPosition {
     LEFT("Left"), RIGHT("Right");
 
     @Getter
+    @Setter(AccessLevel.NONE)
     private String description;
 }

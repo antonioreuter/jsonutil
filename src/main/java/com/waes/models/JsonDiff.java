@@ -55,6 +55,7 @@ public class JsonDiff<K,V> implements Serializable {
   }
 
   private Map<K,V> convertDiffToMap(Map<K, MapDifference.ValueDifference<V>> diff) {
+    //Converts a MapDifference.ValueDifference<V>> object into a Map<K,V>.
     return (new GsonBuilder().create())
         .fromJson(new com.google.gson.Gson().toJson(diff), new TypeToken<Map<K, V>>(){}.getType());
   }

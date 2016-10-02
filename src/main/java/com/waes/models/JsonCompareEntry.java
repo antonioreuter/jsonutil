@@ -41,7 +41,12 @@ public class JsonCompareEntry implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<JsonPayload> payloads;
 
-    public void addPayload(JsonPayload payload) {
+  /**
+   * Adds a new Json payload.
+   *
+   * @param payload
+   */
+  public void addPayload(JsonPayload payload) {
       validatePayloadEntry(payload);
 
       if (CollectionUtils.isEmpty(payloads))
@@ -52,6 +57,11 @@ public class JsonCompareEntry implements Serializable {
 
     }
 
+  /**
+   * Gets a Json payload based on it's position.
+   * @param position
+   * @return
+   */
     public JsonPayload getJsonPayload(PayloadPosition position) {
       if (CollectionUtils.isEmpty(payloads))
         throw new IllegalStateException("There is no payload registred!");
